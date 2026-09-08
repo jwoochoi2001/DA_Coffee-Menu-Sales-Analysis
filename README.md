@@ -7,7 +7,8 @@
 **메뉴 수를 늘리는 것은 매출을 끌어올리지 않는다.** 매출을 가르는 것은 방문객 수,
 가격 포지셔닝, 매장 포맷이며, 메뉴 수는 매출을 키우는 수단이 아니라 비용을 관리하는 대상이다.
 
-📄 **[통합 리포트 (HTML)](output/report.html)** · 세부 분석은 [`output/`](output) 의 마크다운 문서
+📄 **[통합 리포트 바로 보기](https://raw.githack.com/jwoochoi2001/DA_Coffee-Menu-Sales-Analysis/main/output/report.html)**
+ (브라우저 렌더) · [소스 HTML](output/report.html) · 세부 분석은 [`output/`](output) 의 마크다운 문서
 
 ---
 
@@ -302,8 +303,9 @@ python scripts/06_build_report.py            # → output/report.html
 `06_build_report.py` 가 `report.template.html` 의 그림 자리표시자를 base64로 치환해
 **의존성 없는 단독 HTML** `output/report.html` 을 만든다 (그림 내장, 오프라인 열람 가능).
 
-- **바로 보기** — 저장소에서 [`output/report.html`](output/report.html) 을 내려받아 브라우저로 연다.
-- **웹 배포** — Settings → Pages → Branch `main` · `/ (root)` 설정 후
+- **바로 보기 (설정 불필요)** — [raw.githack.com 렌더 링크](https://raw.githack.com/jwoochoi2001/DA_Coffee-Menu-Sales-Analysis/main/output/report.html)
+  또는 [`output/report.html`](output/report.html) 내려받아 브라우저로 열기
+- **GitHub Pages** — Settings → Pages → Source: Deploy from a branch → Branch `main` · `/ (root)` 저장 후
   `https://jwoochoi2001.github.io/DA_Coffee-Menu-Sales-Analysis/output/report.html`
 - **재현성** — 모든 그림·표는 `scripts/` 실행으로 재생성된다. 원본 데이터는 `.gitignore` 처리했고
   위 재현 방법으로 복원한다.
