@@ -14,5 +14,10 @@ for png in FIGDIR.glob("*.png"):
     html = html.replace(token, f"data:image/png;base64,{b64}")
 
 assert "__R_" not in html, "치환 안 된 그림 토큰이 남아있음"
-OUT.write_text(html, encoding="utf-8")
-print(f"wrote {OUT}  ({len(html)/1024:.0f} KB)")
+
+# 단독 파일(GitHub Pages·githack·오프라인)로 열 때 표준모드·한글 인코딩 보장.
+# Artifact 배포 시엔 래퍼가 자체 <!doctype>/charset 을 앞에 붙이므로 중복돼도 브라우저가 무시.
+PRELUDE = ('<!doctype html>\n<meta charset="utf-8">\n'
+           '<meta name="viewport" content="width=device-width,initial-scale=1">\n')
+OUT.write_text(PRELUDE + html, encoding="utf-8")
+print(f"wrote {OUT}  ({(len(PRELUDE)+len(html))/1024:.0f} KB)")
