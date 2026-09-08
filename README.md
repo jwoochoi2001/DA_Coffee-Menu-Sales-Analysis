@@ -35,6 +35,38 @@
 
 ---
 
+## 파이프라인
+
+| 단계 | 내용 | 스크립트 | 산출물 |
+|---|---|---|---|
+| **1. 수집** | Maven 원본 다운로드 · 공정위 API 8개년 수집 · 나무위키 메뉴 수 집계 · 아메리카노 가격 조사 | `11_fetch_franchise_sales.py` | `data/raw/`, `data/franchise/franchise_all_raw.csv` |
+| **2. 전처리** | 날짜·시각 파싱 · `revenue` 파생 · 시간 특성 생성 · 품질 점검 · 브랜드명 정규화 · 패널 구성 | `01_preprocess.py`, `02_eda.py`, `15_menusize_deep.py` | `coffee_clean.parquet`, `store_day/week_panel.csv`, `menusize_panel_v2.csv`, `quality_report.json` |
+| **3. 분석** | STL 분해 · 드라이버 회귀 · 매출 분해 · 합리화 시뮬레이션 · 브랜드 단면 회귀 | `03`, `04`, `12`, `15` | `output/*.md`, `output/figures/` |
+| **4. 검증** | 내생성 통제 · 부트스트랩 · Leave-one-out · 측정오차 몬테카를로 · 검정력 · 동등성(TOST) | `07_menu_effect_bounds.py`, `15_menusize_deep.py` §D–E | `menu_effect_bounds.md`, `franchise_menusize_deep.md` |
+| **5. 전개** | 템플릿 + 그림(base64) 결합 → 단독 HTML 리포트 · GitHub Pages 배포 | `05`, `07_report_figures_p2`, `06_build_report.py` | `output/report.html` |
+
+---
+
+## 전처리
+
+**1부 — `01_preprocess.py`**
+
+- `transaction_date`(`M/D/YY`) + `transaction_time`(`H:MM:SS`) → `transaction_dt` 로 결합
+- `revenue = transaction_qty × unit_price` 파생
+- 시간 특성 생성: 연·월·ISO주·요일·시간대(daypart)·주말 여부
+- 품질 점검: 결측 0건 · 중복 0건 · `unit_price ≤ 0` 0건 · `qty ≤ 0` 0건 → 행 삭제 없이 진행 (`quality_report.json`)
+- 집계 패널 3종 구성: 일자(181), 매장 × 일자(543), 매장 × 주(81)
+
+**2부 — `11_fetch_franchise_sales.py`, `15_menusize_deep.py`**
+
+- 공정위 API 응답의 `avrgSlsAmt`(천원 단위) → 억원 변환, `indutyMlsfcNm == "커피"` 로 필터
+- 브랜드명 정규화: 영문 병기·표기 변형 통합 (「할리스커피」·「할리스/할리스커피」 → 「할리스」 등)
+- 동일 브랜드-연도 중복 행은 가맹점 수가 큰 행을 채택
+- 파생 변수: 개점률 · 폐점률 · 푸드 비중 · 매출 CAGR(2020→2024) · 저가 더미(가격 2,500원 미만) · 업력
+- 나무위키 메뉴 수는 수동 집계 (HOT/ICED·사이즈 변형 제외, 시즌·단종 항목 제외), 브랜드별 신뢰도 0.55~0.85 로 태깅
+
+---
+
 ## 1부 — Maven Roasters: 한 체인의 거래 로그
 
 ### 매출은 무엇으로 결정되는가
@@ -200,6 +232,25 @@
 
 ---
 
+## 검증 — 결과가 얼마나 튼튼한가
+
+핵심 결과(메뉴 수 ↔ 매출 관계 없음)를 여러 각도에서 흔들어 봤다.
+
+| 검증 | 방법 | 결과 |
+|---|---|---|
+| **내생성 통제** | 1부 회귀에 `log(거래수)` 추가 | 메뉴 폭 계수 +2.1%/개 → −0.05%/개 (p = 0.80), 소멸 |
+| **부트스트랩 CI** | 4,000회 재표집 | r의 95% 구간 −0.47 ~ +0.49 (0 포함, 유의하지 않음) |
+| **Leave-one-out** | 브랜드 1개씩 제외 후 재계산 | r 범위 −0.11 ~ +0.13 — 어느 한 브랜드도 관계를 만들거나 없애지 않음 |
+| **측정 오차** | 메뉴 수에 신뢰도 기반 잡음 주입, 1,500회 재적합 | 회귀 계수·상관 중앙값 변화 없음 → 집계 오차와 무관하게 결론 불변 |
+| **검정력** | n = 19에서 80% 검정력의 최소 탐지 \|r\| | ≈ 0.60 → 큰 효과(양·음)는 배제, \|r\| < 0.4 는 미결 |
+| **동등성 (TOST)** | 1부 메뉴 폭 계수가 ±SESOI 안인지 | "메뉴 10개당 ±7% 초과" 효과는 통계적으로 배제 |
+| **다중 성과지표** | 평균매출 외 면적당매출·매출 CAGR로도 회귀 | 어느 지표에서도 메뉴 수 계수 유의하지 않음 |
+
+세부 수치: [`output/menu_effect_bounds.md`](output/menu_effect_bounds.md) ·
+[`output/franchise_menusize_deep.md`](output/franchise_menusize_deep.md) (§D 강건성, §E 검정력)
+
+---
+
 ## 데이터 출처
 
 | 데이터 | 출처 | 라이선스·비고 |
@@ -246,6 +297,19 @@ python scripts/06_build_report.py            # → output/report.html
 
 ---
 
+## 전개
+
+`06_build_report.py` 가 `report.template.html` 의 그림 자리표시자를 base64로 치환해
+**의존성 없는 단독 HTML** `output/report.html` 을 만든다 (그림 내장, 오프라인 열람 가능).
+
+- **바로 보기** — 저장소에서 [`output/report.html`](output/report.html) 을 내려받아 브라우저로 연다.
+- **웹 배포** — Settings → Pages → Branch `main` · `/ (root)` 설정 후
+  `https://jwoochoi2001.github.io/DA_Coffee-Menu-Sales-Analysis/output/report.html`
+- **재현성** — 모든 그림·표는 `scripts/` 실행으로 재생성된다. 원본 데이터는 `.gitignore` 처리했고
+  위 재현 방법으로 복원한다.
+
+---
+
 ## 폴더 구조
 
 ```
@@ -253,19 +317,21 @@ python scripts/06_build_report.py            # → output/report.html
 ├─ README.md                     이 문서
 ├─ NOTES.md                      작업 로그 (진행 순서·중간 결정)
 ├─ scripts/
-│  ├─ 01_preprocess.py           1부 · 정제
-│  ├─ 02_eda.py                  1부 · EDA
-│  ├─ 03_timeseries_drivers.py   1부 · STL · 회귀
-│  ├─ 04_menu_rationalization.py 1부 · 합리화 시뮬레이션
-│  ├─ 05_report_figures.py       리포트 그림 (1부)
-│  ├─ 06_build_report.py         report.template.html → output/report.html
-│  ├─ 07_menu_effect_bounds.py   1부 · 효과 경계 · 동등성 검정
-│  ├─ 07_report_figures_p2.py    리포트 그림 (2부)
+│  ├─ 01_preprocess.py            1부 · 정제 · 파생변수 · 품질점검
+│  ├─ 02_eda.py                   1부 · EDA · 패널 구성
+│  ├─ 03_timeseries_drivers.py    1부 · STL 분해 · 드라이버 회귀 · 매출 분해
+│  ├─ 04_menu_rationalization.py  1부 · 메뉴 합리화 시뮬레이션
+│  ├─ 05_report_figures.py        리포트 그림 (1부)
+│  ├─ 06_build_report.py          report.template.html → output/report.html
+│  ├─ 07_menu_effect_bounds.py    1부 · 효과 경계 · 동등성(TOST) 검정
+│  ├─ 07_report_figures_p2.py     리포트 그림 (2부)
+│  ├─ 10_build_starbucks_promo_timeline.py  (참고) 스타벅스 프로모션 타임라인
 │  ├─ 11_fetch_franchise_sales.py 2부 · 공정위 API 수집
-│  ├─ 12_franchise_eda.py        2부 · 매출·출점 EDA
-│  ├─ 14_menusize_vs_sales.py    2부 · 메뉴 수 단면 (1차, n=13)
-│  ├─ 15_menusize_deep.py        2부 · 메뉴 수 심화 단면 (n=19)
-│  └─ report.template.html       리포트 템플릿
+│  ├─ 12_franchise_eda.py         2부 · 매출·출점 EDA
+│  ├─ 13_ingest_bigkinds.py       (미사용) 빅카인즈 뉴스 수집 스텁
+│  ├─ 14_menusize_vs_sales.py     2부 · 메뉴 수 단면 (1차, n=13)
+│  ├─ 15_menusize_deep.py         2부 · 메뉴 수 심화 단면 (n=19, 8단계)
+│  └─ report.template.html        리포트 템플릿
 ├─ data/
 │  ├─ processed/quality_report.json
 │  └─ franchise/
@@ -280,9 +346,9 @@ python scripts/06_build_report.py            # → output/report.html
    ├─ menu_rationalization.md     1부 · 합리화 시뮬레이션
    ├─ menu_effect_bounds.md       1부 · 효과 경계
    ├─ franchise_eda.md            2부 · 프랜차이즈 EDA
-   ├─ franchise_menusize_deep.md  2부 · 메뉴 수 심화 분석
-   ├─ figures/                    분석 그림 (01–46)
-   └─ report/                     리포트용 그림 (r_*.png)
+   ├─ franchise_menusize_deep.md  2부 · 메뉴 수 심화 분석 (8단계)
+   ├─ figures/                    분석 그림 22장 (01_ ~ 46_)
+   └─ report/                     리포트용 그림 10장 (r_*.png)
 ```
 
 ---
