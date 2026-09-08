@@ -1,0 +1,649 @@
+<title>메뉴는 매출의 레버가 아니다</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@300;500;700&family=IBM+Plex+Sans+KR:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+  :root{
+    --bg:#F7F5F1; --surface:#FFFFFF; --surface-2:#FCFBF8; --fig:#FCFCFB;
+    --ink:#26241F; --muted:#655F55; --faint:#978F82;
+    --line:#E4DFD5; --line-strong:#D3CCBE;
+    --accent:#2F6F9F; --accent-ink:#245A81; --accent-soft:#EBF1F6;
+    --pos:#3F7D53; --neg:#A8382C;
+    --serif:"Noto Serif KR",Georgia,"Times New Roman",serif;
+    --sans:"IBM Plex Sans KR",-apple-system,"Segoe UI",Roboto,sans-serif;
+    --mono:"IBM Plex Mono",ui-monospace,"SFMono-Regular",Menlo,monospace;
+    --measure:37rem;
+  }
+  @media (prefers-color-scheme:dark){
+    :root:not([data-theme="light"]){
+      --bg:#161719; --surface:#1E2023; --surface-2:#212327; --fig:#FBFBF9;
+      --ink:#E9E5DD; --muted:#A9A192; --faint:#7C7466;
+      --line:#323438; --line-strong:#43454A;
+      --accent:#63A6D4; --accent-ink:#8CC0E4; --accent-soft:#1C2A33;
+      --pos:#6FB183; --neg:#D8776B;
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#161719; --surface:#1E2023; --surface-2:#212327; --fig:#FBFBF9;
+    --ink:#E9E5DD; --muted:#A9A192; --faint:#7C7466;
+    --line:#323438; --line-strong:#43454A;
+    --accent:#63A6D4; --accent-ink:#8CC0E4; --accent-soft:#1C2A33;
+    --pos:#6FB183; --neg:#D8776B;
+  }
+
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+  body{
+    margin:0; background:var(--bg); color:var(--ink);
+    font-family:var(--sans); font-weight:400; font-size:17px; line-height:1.72;
+    -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;
+  }
+
+  /* ---- top bar ---- */
+  header.bar{
+    position:sticky; top:0; z-index:20;
+    display:flex; align-items:center; justify-content:space-between; gap:1rem;
+    padding:.7rem clamp(1rem,4vw,2.5rem);
+    background:color-mix(in srgb,var(--bg) 88%,transparent);
+    backdrop-filter:blur(8px); border-bottom:1px solid var(--line);
+    font-family:var(--mono); font-size:.74rem; letter-spacing:.04em;
+  }
+  header.bar .who{color:var(--faint); text-transform:uppercase}
+  header.bar nav{display:flex; gap:1.1rem; flex-wrap:wrap; justify-content:flex-end}
+  header.bar nav a{color:var(--muted); text-decoration:none}
+  header.bar nav a:hover{color:var(--accent)}
+  :focus-visible{outline:2px solid var(--accent); outline-offset:3px; border-radius:2px}
+
+  main{max-width:62rem; margin:0 auto; padding:0 clamp(1rem,4vw,2.5rem) 6rem}
+  section{padding-top:4.5rem}
+  .col{max-width:var(--measure)}
+  p{margin:0 0 1.1rem}
+  a{color:var(--accent-ink)}
+  strong{font-weight:600}
+  em{font-style:normal; background:linear-gradient(transparent 62%,var(--accent-soft) 62%); padding:0 .1em}
+
+  /* ---- masthead ---- */
+  .masthead{padding-top:clamp(3rem,9vw,6rem)}
+  .eyebrow{
+    font-family:var(--mono); font-size:.78rem; letter-spacing:.16em;
+    text-transform:uppercase; color:var(--accent-ink); margin-bottom:1.4rem;
+  }
+  h1{
+    font-family:var(--serif); font-weight:700; font-size:clamp(2.5rem,7vw,4.1rem);
+    line-height:1.08; letter-spacing:-.01em; margin:0 0 1.3rem; text-wrap:balance;
+  }
+  .dek{font-size:1.28rem; line-height:1.6; color:var(--muted); max-width:34rem; font-weight:300}
+  .meta{
+    margin-top:2.4rem; padding-top:1.3rem; border-top:1px solid var(--line);
+    display:flex; flex-wrap:wrap; gap:.5rem 2rem;
+    font-family:var(--mono); font-size:.8rem; color:var(--muted);
+  }
+  .meta b{color:var(--ink); font-weight:500}
+
+  /* ---- headings ---- */
+  h2{
+    font-family:var(--serif); font-weight:700; font-size:clamp(1.7rem,3.6vw,2.35rem);
+    line-height:1.2; letter-spacing:-.005em; margin:0 0 1.5rem; text-wrap:balance;
+  }
+  h2 .num{
+    display:block; font-family:var(--mono); font-size:.8rem; font-weight:500;
+    letter-spacing:.14em; color:var(--accent-ink); margin-bottom:.7rem;
+  }
+  h3{
+    font-family:var(--sans); font-weight:600; font-size:1.06rem; letter-spacing:.01em;
+    margin:2.4rem 0 .9rem; color:var(--ink);
+  }
+  h3::before{content:"— "; color:var(--faint)}
+
+  /* ---- key takeaway block ---- */
+  .finding{
+    margin:2rem 0; padding:.2rem 0 .2rem 1.5rem; border-left:3px solid var(--accent);
+    max-width:var(--measure);
+  }
+  .finding p{font-size:1.12rem; line-height:1.62; margin:0}
+  .finding .k{font-family:var(--serif); font-weight:500}
+
+  /* ---- stat tiles ---- */
+  .tiles{
+    display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
+    gap:1px; background:var(--line); border:1px solid var(--line);
+    margin:2.5rem 0; border-radius:3px; overflow:hidden;
+  }
+  .tile{background:var(--surface); padding:1.3rem 1.2rem}
+  .tile .v{font-family:var(--serif); font-weight:700; font-size:1.95rem; line-height:1; letter-spacing:-.01em}
+  .tile .l{margin-top:.5rem; font-size:.82rem; color:var(--muted); line-height:1.4}
+  .tile .v small{font-size:.9rem; font-weight:500; color:var(--muted)}
+
+  /* ---- figure ---- */
+  figure{
+    margin:2.6rem 0; max-width:60rem;
+  }
+  figure img{
+    display:block; width:100%; height:auto; border:1px solid var(--line-strong);
+    border-radius:4px; background:var(--fig);
+  }
+  figcaption{
+    margin-top:.7rem; font-size:.85rem; color:var(--muted); line-height:1.55;
+    font-family:var(--mono); max-width:44rem;
+  }
+  figcaption b{color:var(--ink); font-weight:500}
+
+  /* ---- tables ---- */
+  .tw{overflow-x:auto; margin:2rem 0; border:1px solid var(--line); border-radius:4px}
+  table{border-collapse:collapse; width:100%; font-size:.9rem}
+  caption{
+    text-align:left; padding:.85rem 1rem; background:var(--surface-2);
+    border-bottom:1px solid var(--line); font-family:var(--mono); font-size:.8rem;
+    color:var(--muted); letter-spacing:.02em;
+  }
+  th,td{padding:.6rem 1rem; text-align:right; border-bottom:1px solid var(--line); white-space:nowrap}
+  th:first-child,td:first-child{text-align:left; white-space:normal}
+  thead th{
+    font-family:var(--mono); font-weight:500; font-size:.78rem; color:var(--muted);
+    background:var(--surface-2); letter-spacing:.02em;
+  }
+  tbody tr:last-child td{border-bottom:0}
+  tbody td{font-variant-numeric:tabular-nums}
+  td .mono,tbody td:not(:first-child){font-family:var(--mono)}
+  tr.hl td{background:var(--accent-soft)}
+  .pos{color:var(--pos); font-weight:500}
+  .neg{color:var(--neg); font-weight:500}
+
+  /* ---- lists ---- */
+  ul.clean{list-style:none; padding:0; margin:1.2rem 0; max-width:var(--measure)}
+  ul.clean li{position:relative; padding:.55rem 0 .55rem 1.5rem; border-bottom:1px solid var(--line)}
+  ul.clean li::before{content:""; position:absolute; left:0; top:1.35em; width:.55rem; height:1px; background:var(--accent)}
+  ul.clean li:last-child{border-bottom:0}
+  ul.clean li b{font-weight:600}
+
+  ol.steps{padding:0; margin:1.3rem 0; counter-reset:s; list-style:none; max-width:var(--measure)}
+  ol.steps li{position:relative; padding:.3rem 0 1.1rem 2.4rem; counter-increment:s}
+  ol.steps li::before{
+    content:counter(s,decimal-leading-zero); position:absolute; left:0; top:.35rem;
+    font-family:var(--mono); font-size:.78rem; color:var(--accent-ink); font-weight:500;
+  }
+  ol.steps li:not(:last-child)::after{content:""; position:absolute; left:.42rem; top:2rem; bottom:.3rem; width:1px; background:var(--line)}
+
+  /* ---- callout ---- */
+  .note{
+    margin:2rem 0; padding:1.1rem 1.3rem; background:var(--surface);
+    border:1px solid var(--line); border-radius:4px; font-size:.94rem;
+    color:var(--muted); max-width:var(--measure);
+  }
+  .note b{color:var(--ink)}
+  .note.warn{border-left:3px solid var(--neg)}
+
+  hr.rule{border:0; border-top:1px solid var(--line); margin:4rem 0 0}
+
+  /* ---- appendix ---- */
+  .appendix{margin-top:4.5rem; font-size:.92rem}
+  .appendix h2{font-size:1.4rem}
+  .grid2{display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:1.4rem 2.5rem}
+  .filelist{font-family:var(--mono); font-size:.8rem; line-height:1.9; color:var(--muted)}
+  .filelist b{color:var(--ink); font-weight:500}
+  code{font-family:var(--mono); font-size:.86em; background:var(--surface-2); padding:.1em .4em; border-radius:3px; border:1px solid var(--line)}
+  pre{
+    font-family:var(--mono); font-size:.82rem; background:var(--surface); color:var(--ink);
+    border:1px solid var(--line); border-radius:4px; padding:1rem 1.1rem; overflow-x:auto; line-height:1.7;
+  }
+  footer{margin-top:5rem; padding-top:1.5rem; border-top:1px solid var(--line); font-family:var(--mono); font-size:.76rem; color:var(--faint)}
+</style>
+
+<header class="bar">
+  <span class="who">카페 매출 · 메뉴 분석</span>
+  <nav>
+    <a href="#summary">요약</a>
+    <a href="#data">데이터</a>
+    <a href="#drivers">01 드라이버</a>
+    <a href="#menu">02 메뉴구성</a>
+    <a href="#sim">03 시뮬레이션</a>
+    <a href="#hypothesis">04 한계</a>
+    <a href="#korea">05 국내검증</a>
+    <a href="#conclusion">결론</a>
+  </nav>
+</header>
+
+<main>
+
+  <section class="masthead" id="top">
+    <div class="eyebrow">데이터 분석 리포트 · 2026.09</div>
+    <h1>메뉴는 매출의<br>레버가 아니다</h1>
+    <p class="dek">카페의 메뉴 수가 매출을 좌우하는가.
+      3개 매장 거래 15만 건으로 분해하고, 국내 커피 프랜차이즈 20개 브랜드로 다시 검증한다.</p>
+    <div class="meta">
+      <span>1부 <b>Maven Roasters · 149,116건 · 2023 상반기</b></span>
+      <span>2부 <b>국내 프랜차이즈 20개 · 2017–2024</b></span>
+      <span>출처 <b>Maven Analytics · 공정거래위원회 · 나무위키</b></span>
+      <span>도구 <b>pandas · statsmodels · STL</b></span>
+    </div>
+  </section>
+
+  <!-- ================= SUMMARY ================= -->
+  <section id="summary">
+    <h2><span class="num">개요</span>한 문장으로</h2>
+    <div class="col">
+      <p>Maven Roasters 한 체인에서 <em>매출은 방문객 수 하나로 결정된다.</em> 요일·시간대·매장·객단가·
+        메뉴 폭은 유의한 설명력을 갖지 못하고, 메뉴 라인업은 하위 절반을 덜어내도 매출 손실이 미미하다.
+        그리고 <em>국내 커피 프랜차이즈 20개 브랜드로 확장해도 메뉴 수와 매출 사이엔 관계가 없다</em>
+        (r ≈ 0). 즉 메뉴 수는 매출을 <b>키우는</b> 수단이 아니라 <b>비용을 관리하는</b> 대상이다.</p>
+    </div>
+
+    <div class="tiles">
+      <div class="tile"><div class="v">94.6<small>%</small></div><div class="l">Maven 매출 변동 중 '추세'가 차지하는 분산 (요일·매장 ≈ 0)</div></div>
+      <div class="tile"><div class="v">+12.0<small>%</small></div><div class="l">월 매출 성장의 트래픽 기여 — 객단가 기여는 −0.2%(p=0.85)</div></div>
+      <div class="tile"><div class="v">98<small>%</small></div><div class="l">메뉴 12.5% 단종 후 유지되는 매출 (대체 0 가정)</div></div>
+      <div class="tile"><div class="v">r ≈ 0</div><div class="l">국내 19개 브랜드 메뉴 수 ↔ 가맹점 평균매출 (부트스트랩 −0.5~+0.5)</div></div>
+    </div>
+
+    <h3>핵심 결론 4가지</h3>
+    <ul class="clean">
+      <li><b>성장은 전부 트래픽이다.</b> Maven의 6개월간 매출 2배 증가는 거래 건수 증가로 100% 설명되고,
+        객단가($4.69)는 내내 정체했다.</li>
+      <li><b>메뉴는 롱테일이다.</b> 80개 메뉴 중 43개(54%)가 매출의 80%를 만들고,
+        하위 40개(50%)는 다 합쳐도 23%에 불과하다.</li>
+      <li><b>메뉴를 줄여도 매출은 남는다.</b> 하위 12.5%(주로 낱개 차·소량 포장) 단종 시
+        대체 효과 0을 가정해도 매출의 98%가 유지된다.</li>
+      <li><b>국내 브랜드에서도 '많은 메뉴 = 높은 매출'은 없다.</b> 19개 브랜드 단면에서 총 메뉴 수와
+        가맹점 평균매출의 상관은 사실상 0이고, 매출을 가르는 것은 <b>가격 포지셔닝과 매장 포맷</b>이다(5절).</li>
+    </ul>
+  </section>
+
+  <!-- ================= DATA ================= -->
+  <section id="data">
+    <h2><span class="num">데이터 &amp; 방법</span>두 개의 데이터셋</h2>
+    <div class="col">
+      <p><b>1부 (섹션 01–04)</b> — Maven Analytics가 공개한 가상 카페 체인 <b>Maven Roasters</b>의
+        거래 로그. 거래아이템 단위 149,116행 × 11열, 결측·중복·이상치 없음. 시계열용 일자 패널(181일),
+        회귀·시뮬레이션용 매장 × 일자 패널(543행), 매장 × 주 패널(81행)로 집계했다.</p>
+      <p><b>2부 (섹션 05)</b> — 국내 커피 프랜차이즈 <b>20개 브랜드</b>. 매출은
+        <b>공정거래위원회 가맹사업 정보공개서</b>(<code>FftcBrandFrcsStatsService</code> API, 2017–2024)의
+        가맹점 평균매출액, 메뉴 수는 <b>나무위키 브랜드 문서</b>(2026 스냅샷)에서 음료·푸드 항목을 집계했다
+        (HOT/ICED·사이즈 변형 제외, ±20–30% 오차).</p>
+    </div>
+
+    <ol class="steps">
+      <li><b>전처리</b> — 날짜·시각 결합, <code>revenue = qty × unit_price</code>, 시간 특성 파생.</li>
+      <li><b>시계열 분해</b> — 일매출에 STL(period = 7, robust), 추세·주간계절·잔차 분리.</li>
+      <li><b>드라이버 회귀</b> — <code>log(일매출) ~ 매장 + 요일 + 시간추세 + 가격·구성</code>, HC1, 블록별 증분 R².</li>
+      <li><b>매출 분해</b> — <code>log(매출) = log(거래수) + log(객단가)</code>.</li>
+      <li><b>메뉴 합리화 시뮬레이션</b> — 하위 매출 순 단종, 이탈 수요를 대체율 σ로 잔여 메뉴에 재분배.</li>
+      <li><b>브랜드 단면 분석</b> — <code>평균매출 ~ log(메뉴수) + 가격 + 매장수 + 업력</code>,
+        상관행렬·부트스트랩·LOO·검정력 분석.</li>
+    </ol>
+
+    <div class="note"><b>1거래 = 1품목.</b> Maven 원본에서 <code>transaction_id</code>가 행마다 유일해
+      동시 구매(장바구니) 정보가 없다. 연관규칙·교차판매 분석은 불가능하며, 이 제약이 3·4절 해석의 상한을 규정한다.</div>
+  </section>
+
+  <!-- ================= 01 DRIVERS ================= -->
+  <section id="drivers">
+    <h2><span class="num">섹션 01</span>매출은 무엇으로 결정되는가</h2>
+    <div class="col">
+      <p>일매출은 1월 평균 $2,635에서 6월 $5,550로 <b>6개월 만에 두 배</b>가 됐다.
+        STL로 분해하면 이 변동의 성격이 분명해진다.</p>
+    </div>
+
+    <figure>
+      <img src="__R_GROWTH__" alt="일매출 원계열과 7일 이동평균: 꾸준한 우상향">
+      <figcaption><b>그림 1.</b> 일매출과 7일 이동평균. 뚜렷한 우상향, 요일 진동은 육안으로 거의 안 보인다.</figcaption>
+    </figure>
+
+    <figure>
+      <img src="__R_STL__" alt="STL 분해: 추세가 분산의 94.6%, 주간계절 1.9%, 잔차 5.7%">
+      <figcaption><b>그림 2.</b> STL 분해(period = 7). 추세 강도 F<sub>T</sub> = 0.94,
+        주간계절 강도 F<sub>S</sub> = 0.25. 잔차의 가장 큰 음의 스파이크(−$1,095)는
+        <b>2023-05-29 메모리얼 데이(미국 공휴일)</b>다.</figcaption>
+    </figure>
+
+    <div class="finding">
+      <p><span class="k">매출 변동의 95%가 '추세' 한 성분이다.</span> 주간 계절성은 진폭 ±$109
+        (평균의 ±2.8%)로 미미하고, 주중·주말 차이도 없다($3,874 vs $3,828).</p>
+    </div>
+
+    <div class="col">
+      <p>그렇다면 그 추세는 무엇으로 설명되는가? <code>log(일매출)</code>을 매장·요일·
+        시간추세·가격·구성 변수에 회귀하고, 변수군을 하나씩 더하며 누적 R²를 봤다.</p>
+    </div>
+
+    <figure>
+      <img src="__R_DRIVERS__" alt="블록별 누적 R²: 시간추세가 73%p, 나머지는 합쳐 9%p">
+      <figcaption><b>그림 3.</b> 블록별 누적 설명력. 매장·요일은 0에 가깝고,
+        시간추세(t, t²) 하나가 R²를 0.73까지 끌어올린다.</figcaption>
+    </figure>
+
+    <div class="tw">
+      <table>
+        <caption>표 1. log(일매출) 회귀 — 변수군 순차 추가 (n = 543, HC1)</caption>
+        <thead><tr><th>추가 변수군</th><th>누적 R²</th><th>증분</th></tr></thead>
+        <tbody>
+          <tr><td>매장 고정효과</td><td>0.001</td><td>+0.001</td></tr>
+          <tr><td>+ 요일</td><td>0.002</td><td>+0.001</td></tr>
+          <tr class="hl"><td>+ 시간추세 (t, t²)</td><td>0.735</td><td class="pos">+0.733</td></tr>
+          <tr><td>+ 평균 단가</td><td>0.769</td><td>+0.035</td></tr>
+          <tr><td>+ 오전 매출 비중</td><td>0.769</td><td>+0.000</td></tr>
+          <tr><td>+ 메뉴 폭 (그 날 팔린 고유 SKU 수)</td><td>0.820</td><td>+0.051</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>성장은 트래픽인가 객단가인가</h3>
+    <div class="col">
+      <p><code>log(매출) = log(거래수) + log(객단가)</code> 로 분해해 각 항을 같은 우변에 회귀했다.</p>
+    </div>
+    <div class="tw">
+      <table>
+        <caption>표 2. 월 성장률 기여 배분 (선형 추세항 기준)</caption>
+        <thead><tr><th>항목</th><th>월 성장 기여</th><th>비고</th></tr></thead>
+        <tbody>
+          <tr><td>매출</td><td>+11.8%</td><td>—</td></tr>
+          <tr><td>├ 거래수 (트래픽)</td><td class="pos">+12.0%</td><td>R² 0.77</td></tr>
+          <tr><td>└ 객단가</td><td>−0.2%</td><td>p = 0.85 · 사실상 0</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="note warn"><b>메뉴 폭 계수는 허상이다.</b> 표 1에서 '메뉴 폭'은 +2.1%/개
+      (p&lt;0.001)로 유의해 보이지만, <code>log(거래수)</code>를 통제하면 계수가
+      −0.05%/개 (p = 0.80)로 사라진다. "거래가 많은 날일수록 80개 중 더 많은 메뉴가
+      최소 1개씩 팔린다"는 <b>기계적 상관</b>일 뿐, 메뉴를 늘려서 매출이 오른 게 아니다.</div>
+  </section>
+
+  <!-- ================= 02 MENU ================= -->
+  <section id="menu">
+    <h2><span class="num">섹션 02</span>메뉴 구성의 구조</h2>
+    <div class="col">
+      <p>매출이 트래픽으로 결정된다면, 메뉴 라인업은 그 트래픽 안에서 어떻게 분포하는가.</p>
+    </div>
+
+    <figure>
+      <img src="__R_PARETO__" alt="메뉴별 누적 매출 곡선: 상위 43개가 매출의 80%">
+      <figcaption><b>그림 4.</b> 메뉴(product_detail) 매출 순위별 누적 곡선.
+        상위 <b>43개(전체의 54%)</b>가 매출의 80%를 만든다.</figcaption>
+    </figure>
+
+    <figure>
+      <img src="__R_CATEGORY__" alt="카테고리별 매출: Coffee 39%, Tea 28%">
+      <figcaption><b>그림 5.</b> 카테고리별 매출. Coffee + Tea = 67%.
+        포장 상품(Coffee beans·Loose Tea·Branded·Packaged Chocolate)은 24 SKU이지만 합쳐 10%.</figcaption>
+    </figure>
+
+    <div class="finding">
+      <p><span class="k">하위 50개 메뉴(전체의 63%)를 다 합쳐도 매출의 23%.</span>
+        긴 꼬리의 대부분은 낱개 Loose Tea, 소량 포장 초콜릿, $0.8짜리 시럽이다.</p>
+    </div>
+  </section>
+
+  <!-- ================= 03 SIMULATION ================= -->
+  <section id="sim">
+    <h2><span class="num">섹션 03</span>메뉴 합리화 시뮬레이션</h2>
+    <div class="col">
+      <p>하위 매출 순으로 메뉴를 잘라내며, 이탈한 수요의 일부(σ)가 잔여 메뉴로
+        옮겨간다고 가정하고 매출 유지율을 추정했다. σ = 0은 대체가 전혀 없는 하한,
+        σ = 0.5는 수요 절반이 남는 메뉴로 이동하는 경우다.</p>
+    </div>
+
+    <figure>
+      <img src="__R_FRONTIER__" alt="합리화 프론티어: 하위 12.5% 단종 시 매출 98% 유지">
+      <figcaption><b>그림 6.</b> SKU 감축 비율 대 추정 매출 유지율.
+        재포착 매출은 이탈 고객의 원래 지출액을 넘지 못하도록 상방 캡을 뒀다.</figcaption>
+    </figure>
+
+    <div class="tw">
+      <table>
+        <caption>표 3. 3단계 시나리오 (매장 3곳 공통 · 하위 k개 단종)</caption>
+        <thead><tr><th>시나리오</th><th>단종 SKU</th><th>SKU 감축</th><th>제거 매출</th>
+          <th>유지율 σ=0</th><th>σ=0.3</th><th>σ=0.5</th></tr></thead>
+        <tbody>
+          <tr class="hl"><td>보수 (Tier 1)</td><td>10</td><td>−12.5%</td><td>−1.9%</td>
+            <td class="pos">98.1%</td><td>98.2%</td><td>98.2%</td></tr>
+          <tr><td>중도 (Tier 2)</td><td>20</td><td>−25.0%</td><td>−5.1%</td>
+            <td>94.9%</td><td>95.4%</td><td>95.7%</td></tr>
+          <tr><td>공격 (Tier 3)</td><td>30</td><td>−37.5%</td><td>−12.1%</td>
+            <td class="neg">87.9%</td><td>89.9%</td><td>91.3%</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="finding">
+      <p><span class="k">메뉴의 1/8을 없애도 매출은 98% 남는다</span> — 대체 효과를
+        아예 0으로 놓아도. 대상 10개는 대부분 <b>낱개 Loose Tea와 소량 포장 초콜릿</b>으로,
+        제조 라인·메뉴판 복잡도와 무관하게 재고 SKU만 줄인다.</p>
+    </div>
+
+    <div class="tw">
+      <table>
+        <caption>표 4. Tier 1 단종 후보 10개 SKU</caption>
+        <thead><tr><th>메뉴</th><th>카테고리</th><th>구분</th><th>매출</th><th>일·매장당 판매</th><th>단가</th></tr></thead>
+        <tbody>
+          <tr><td>Dark chocolate</td><td>Packaged Chocolate</td><td>포장</td><td>$755</td><td>0.22</td><td>$6.40</td></tr>
+          <tr><td>Earl Grey</td><td>Loose Tea</td><td>포장</td><td>$1,271</td><td>0.26</td><td>$8.95</td></tr>
+          <tr><td>Spicy Eye Opener Chai</td><td>Loose Tea</td><td>포장</td><td>$1,336</td><td>0.22</td><td>$10.95</td></tr>
+          <tr><td>Guatemalan Sustainably Grown</td><td>Coffee beans</td><td>포장</td><td>$1,340</td><td>0.25</td><td>$10.00</td></tr>
+          <tr><td>Lemon Grass</td><td>Loose Tea</td><td>포장</td><td>$1,360</td><td>0.28</td><td>$8.95</td></tr>
+          <tr><td>Peppermint</td><td>Loose Tea</td><td>포장</td><td>$1,369</td><td>0.28</td><td>$8.95</td></tr>
+          <tr><td>Traditional Blend Chai</td><td>Loose Tea</td><td>포장</td><td>$1,369</td><td>0.28</td><td>$8.95</td></tr>
+          <tr><td>English Breakfast</td><td>Loose Tea</td><td>포장</td><td>$1,441</td><td>0.30</td><td>$8.95</td></tr>
+          <tr><td>Serenity Green Tea</td><td>Loose Tea</td><td>포장</td><td>$1,471</td><td>0.29</td><td>$9.25</td></tr>
+          <tr><td>Morning Sunrise Chai</td><td>Loose Tea</td><td>포장</td><td>$1,596</td><td>0.31</td><td>$9.50</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>사이즈 변형은 정리 여지가 없다</h3>
+    <div class="col">
+      <p>2개 이상 사이즈를 파는 음료 17종을 봤지만, 가장 약한 변형도 그 음료 매출의
+        25% 이상을 차지한다(2사이즈 ≈ 40:60, 3사이즈 ≈ 25:35:40). <b>버릴 사이즈가 없다.</b></p>
+    </div>
+
+    <div class="note"><b>이익이 아니라 매출 기준이다.</b> 원가·폐기·인건비 데이터가 없다.
+      저회전 신선품(베이커리 최저 회전도 매장·일 3.4개)과 소량 포장 SKU는
+      이익 개선폭이 이 매출 수치보다 클 가능성이 높다.</div>
+  </section>
+
+  <!-- ================= 04 LIMITS ================= -->
+  <section id="hypothesis">
+    <h2><span class="num">섹션 04</span>Maven 데이터의 한계, 그리고 다음 단계</h2>
+    <div class="col">
+      <p>이 프로젝트는 <b>"운영하는 메뉴 수가 매출에 영향을 주는가"</b>라는 가설에서 출발했다.
+        1–3절은 <em>Maven 데이터만으로는 그 가설을 직접 검정할 수 없다</em>는 것을 보여준다.
+        네 가지 이유가 있다.</p>
+    </div>
+
+    <ul class="clean">
+      <li><b>매장 간 메뉴가 동일하다.</b> 세 매장이 같은 80개 메뉴를 판다. "메뉴 수"라는
+        설명 변수 자체에 변이가 없어 매장 간 비교가 성립하지 않는다.</li>
+      <li><b>'팔린 메뉴 수'는 결과이지 원인이 아니다.</b> 주별 판매 메뉴 수는 거래량과 상관 0.98.
+        역인과가 지배한다(1절 경고 박스).</li>
+      <li><b>장바구니가 없다.</b> 메뉴를 줄였을 때 "그 메뉴 때문에 왔다가 아무것도 안 사고
+        떠나는" 손님을 관측할 수 없다 — 3절 시뮬레이션이 유지율의 <b>상한</b>인 이유다.</li>
+      <li><b>6개월 · 겨울→여름.</b> 성장 추세가 계절과 뒤엉켜 원인(날씨 vs 입소문 vs 마케팅)을 못 가른다.</li>
+    </ul>
+
+    <div class="col">
+      <p>그래서 가설을 제대로 보려면 <b>메뉴 수가 서로 다른 다수 브랜드</b>의 데이터가 필요하다.
+        다음 절에서 국내 커피 프랜차이즈 20개를 모아 이를 시도한다.</p>
+    </div>
+  </section>
+
+  <!-- ================= 05 KOREA ================= -->
+  <section id="korea">
+    <h2><span class="num">섹션 05</span>국내 커피 프랜차이즈로 정면 검증</h2>
+    <div class="col">
+      <p>공정거래위원회 정보공개서에서 <b>가맹점 평균매출액</b>을, 나무위키에서 <b>브랜드별 메뉴 수</b>를
+        모아 20개 브랜드를 맞췄다. 이제 "메뉴 수"에 브랜드 간 실제 변이가 있다 — 47종(요거프레소)부터
+        157종(감성커피)까지.</p>
+    </div>
+
+    <figure>
+      <img src="__R_FRANCHISE__" alt="주요 커피 브랜드 평균매출·매장수 추이 2017-2024">
+      <figcaption><b>그림 7.</b> 주요 6개 브랜드. 투썸은 가맹점당 5억대를 유지하고,
+        저가 3사(메가·컴포즈·빽다방)는 매장 수를 폭발적으로 늘리면서도 가맹점당 매출을 지켰다.
+        이디야는 매출이 하락하며 2023년 첫 순감.</figcaption>
+    </figure>
+
+    <div class="col">
+      <p>메뉴 수와 가맹점 평균매출을 직접 그려보면:</p>
+    </div>
+
+    <figure>
+      <img src="__R_MENUSCATTER__" alt="19개 브랜드 메뉴 수 대 평균매출 산점도: 회귀선이 거의 수평">
+      <figcaption><b>그림 8.</b> 총 메뉴 수 × 가맹점 평균매출 (레거시 매머드커피 제외, n = 19).
+        회귀선 기울기 +0.001억/메뉴, 상관 r = +0.02. 관계가 보이지 않는다.</figcaption>
+    </figure>
+
+    <div class="finding">
+      <p><span class="k">총 메뉴 수와 가맹점 평균매출의 상관은 사실상 0이다.</span>
+        부트스트랩 95% 신뢰구간은 −0.47 ~ +0.49로, 어떤 한 브랜드를 빼도 결과는 −0.1 ~ +0.1을 벗어나지 않는다.</p>
+    </div>
+
+    <div class="tw">
+      <table>
+        <caption>표 5. 메뉴 지표 × 가맹점 평균매출 상관 (n = 19)</caption>
+        <thead><tr><th>메뉴 지표</th><th>Pearson r</th><th>Spearman ρ</th></tr></thead>
+        <tbody>
+          <tr><td>총 메뉴 수</td><td>+0.02</td><td>0.00</td></tr>
+          <tr><td>음료 메뉴 수만</td><td class="neg">−0.12</td><td class="neg">−0.23</td></tr>
+          <tr><td>푸드·디저트 항목 수</td><td>+0.18</td><td>+0.14</td></tr>
+          <tr><td>푸드 비중</td><td class="pos">+0.35</td><td>+0.18</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="col">
+      <p>음료 메뉴만 떼면 약한 <b>음(−)</b>, 푸드·디저트 항목은 약한 <b>양(+)</b>이다 —
+        디저트 카페형(투썸·파스쿠찌)이 후자를 끌어올린다. 가격·매장수·업력을 통제한 회귀
+        어느 스펙에서도 메뉴 수 계수는 유의하지 않았다(p 0.58 ~ 0.84).</p>
+    </div>
+
+    <figure>
+      <img src="__R_TERCILE__" alt="메뉴 규모 3분위별 매출 궤적: 중간 규모가 8년 내내 최고">
+      <figcaption><b>그림 9.</b> 브랜드를 현재 메뉴 규모로 3등분해 공정위 8년 궤적을 본 것.
+        <b>중간 규모 그룹이 내내 매출 최고</b>(≈3억), 너무 적거나 많은 그룹은 더 낮다(≈2억).</figcaption>
+    </figure>
+
+    <div class="finding">
+      <p><span class="k">약한 역U자 — 너무 좁아도, 너무 넓어도 불리하고 중간이 유리하다.</span>
+        다만 분위당 6~7개 브랜드라 확정할 수 없는 힌트다.</p>
+    </div>
+
+    <h3>왜 저가 브랜드는 메뉴가 가장 많은가</h3>
+    <div class="tw">
+      <table>
+        <caption>표 6. 가격대별 평균 메뉴 구성 (아메리카노 가격 기준)</caption>
+        <thead><tr><th>가격대</th><th>브랜드</th><th>음료 수</th><th>푸드 수</th><th>평균매출</th></tr></thead>
+        <tbody>
+          <tr><td>저가 (&lt;2,500원)</td><td>12</td><td>70</td><td>29</td><td>2.3억</td></tr>
+          <tr><td>중가</td><td>2</td><td>85</td><td>55</td><td>1.4억</td></tr>
+          <tr><td>고가 (&gt;4,000원)</td><td>6</td><td>43</td><td>40</td><td class="pos">3.6억</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="col">
+      <p>저가 브랜드가 에이드·스무디·빙수로 메뉴 폭을 가장 넓게 가져가지만 가맹점당 매출은 낮다.
+        <b>많은 메뉴는 저가 박리다매 전략의 부산물이지 매출을 끌어올리는 요인이 아니다.</b>
+        매출을 가르는 것은 가격 포지셔닝과 매장 포맷이다.</p>
+    </div>
+
+    <div class="note warn"><b>이 분석의 한계.</b> n = 19, 단면(인과 아님). 메뉴 수 집계는 나무위키 스냅샷
+      기반 ±20 ~ 30% 오차이고 Y(2023–24)와 시점도 어긋난다. 스타벅스·폴바셋 등 직영 브랜드는
+      정보공개서에 없어 제외됐다. 검정력상 n = 19는 |r| ≳ 0.6인 <b>큰 효과만</b> 탐지 가능하다 —
+      "메뉴 수가 매출을 좌우한다"는 큰 효과는 배제되지만, |r| &lt; 0.4의 작은 효과는 이 표본으로 확정할 수 없다.</div>
+  </section>
+
+  <!-- ================= CONCLUSION ================= -->
+  <section id="conclusion">
+    <h2><span class="num">결론</span>메뉴는 비용의 문제다</h2>
+    <div class="finding">
+      <p><span class="k">한 체인의 거래 로그와 국내 20개 브랜드 단면 — 두 데이터셋이 같은 답을 준다.
+        메뉴 수를 늘리는 것은 매출을 끌어올리지 않는다.</span></p>
+    </div>
+
+    <div class="tw">
+      <table>
+        <caption>표 7. 다섯 갈래의 증거</caption>
+        <thead><tr><th>근거</th><th>설계</th><th>메뉴 수 효과</th></tr></thead>
+        <tbody>
+          <tr><td>Maven 매장내 주간 회귀</td><td>store × week, 트래픽 통제</td><td>계수 0으로 소멸</td></tr>
+          <tr><td>Maven 합리화 시뮬레이션</td><td>메뉴 하위 50% 단종</td><td>매출 77 ~ 88% 유지</td></tr>
+          <tr><td>Maven 주간매출 분산 분해</td><td>매장 간 vs 시점 간</td><td>매장 간(≈메뉴 여지) 0.2%</td></tr>
+          <tr class="hl"><td>국내 19개 브랜드 단면</td><td>가격·매장수 통제</td><td>총 메뉴 r ≈ 0, 음료 메뉴 r ≈ −0.15</td></tr>
+          <tr><td>선택 과부하 문헌 · Simon-Kucher</td><td>실험·산업 벤치마크</td><td>중앙값 58 SKU 초과 시 매출·만족 하락</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="col">
+      <p>메뉴 의사결정은 "무엇을 더해야 매출이 오르나"가 아니라
+        "무엇을 덜어내야 재고·폐기·교육 부담이 주나"의 문제로 다뤄야 한다.
+        Maven의 보수 시나리오(하위 10개, 대부분 낱개 차)는 매출 위험이 사실상 없는 출발점이고,
+        국내 데이터의 희미한 역U자는 <b>중간 규모 메뉴</b>가 최적점일 가능성을 시사한다.</p>
+      <p>남은 것은 <b>이익</b> 쪽 검증이다 — 원가·폐기·인건비 데이터가 붙으면 "메뉴를 줄이면
+        이익이 얼마나 느는가"를 매출이 아닌 마진 기준으로 다시 볼 수 있다.</p>
+    </div>
+  </section>
+
+  <hr class="rule">
+
+  <!-- ================= APPENDIX ================= -->
+  <section class="appendix" id="appendix">
+    <h2><span class="num">부록</span>재현 &amp; 참고</h2>
+
+    <div class="grid2">
+      <div>
+        <h3 style="margin-top:0">1부 — Maven Roasters</h3>
+        <div class="filelist">
+          <b>01_preprocess.py</b> — 정제 · 파생변수<br>
+          <b>02_eda.py</b> — EDA · 패널 구성<br>
+          <b>03_timeseries_drivers.py</b> — STL · 드라이버 회귀<br>
+          <b>04_menu_rationalization.py</b> — 합리화 시뮬레이션<br>
+          <b>07_menu_effect_bounds.py</b> — 효과 경계 · 동등성<br>
+          <br>
+          출처: Maven Analytics "Coffee Shop Sales" (가상 데이터)<br>
+          거래아이템 149,116행 × 11열 · 2023-01-01 – 06-30 · NYC 3개 매장 · 메뉴 80종
+        </div>
+      </div>
+      <div>
+        <h3 style="margin-top:0">2부 — 국내 프랜차이즈</h3>
+        <div class="filelist">
+          <b>11_fetch_franchise_sales.py</b> — 공정위 API 수집<br>
+          <b>12_franchise_eda.py</b> — 매출 · 출점 EDA<br>
+          <b>15_menusize_deep.py</b> — 메뉴 수 심화 단면 (8단계)<br>
+          <br>
+          매출: 공정거래위원회 <b>FftcBrandFrcsStatsService</b><br>
+          (data.go.kr 15110241, 정보공개서 기준, 2017–2024)<br>
+          메뉴 수: 나무위키 브랜드 문서 2026 스냅샷<br>
+          가격: 아메리카노 HOT 최소사이즈, 2024.1
+        </div>
+      </div>
+    </div>
+
+    <h3>재현 방법</h3>
+    <pre>pip install pandas numpy matplotlib statsmodels scipy pyarrow tabulate
+
+# 1부: Maven 원본 (공개 미러)
+curl -L -o data/raw/coffee_shop_sales_raw.csv \
+  https://raw.githubusercontent.com/siglimumuni/Datasets/master/Coffee%20Shop%20Sales.csv
+for s in 01_preprocess 02_eda 03_timeseries_drivers 04_menu_rationalization \
+         05_report_figures 07_menu_effect_bounds; do python scripts/$s.py; done
+
+# 2부: 공정위 API 키를 data/franchise/.apikey 에 저장 후
+for s in 11_fetch_franchise_sales 12_franchise_eda 15_menusize_deep \
+         07_report_figures_p2; do python scripts/$s.py; done
+python scripts/06_build_report.py</pre>
+
+    <h3>한계 요약</h3>
+    <ul class="clean">
+      <li><b>1부</b> 1거래 = 1품목 → 교차판매·연관규칙 불가, 시뮬레이션 유지율은 상한. 가상 데이터 · 6개월 · 단일 계절.</li>
+      <li><b>1부</b> 원가·폐기·인건비 없음 → 매출 기준, 이익 아님. σ(대체율)는 가정값.</li>
+      <li><b>2부</b> n = 19 · 단면 → 인과 아님. 메뉴 수는 나무위키 스냅샷 ±20–30% 오차, Y와 시점 불일치.</li>
+      <li><b>2부</b> 정보공개서 = 가맹점만 → 직영 브랜드(스타벅스·폴바셋) 제외. 검정력상 |r| ≳ 0.6만 탐지 가능.</li>
+    </ul>
+
+    <footer>
+      카페 매출 · 메뉴 분석 · 2026-09 · pandas / statsmodels / STL ·
+      Maven Analytics "Coffee Shop Sales" · 공정거래위원회 가맹사업 정보공개서 · 나무위키
+    </footer>
+  </section>
+
+</main>

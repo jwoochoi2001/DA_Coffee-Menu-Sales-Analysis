@@ -1,0 +1,39 @@
+{
+  "n_rows_raw":149116,
+  "n_dup_full_rows":0,
+  "n_dup_transaction_id":0,
+  "missing_by_col":{
+    "transaction_id":0,
+    "transaction_date":0,
+    "transaction_time":0,
+    "transaction_qty":0,
+    "store_id":0,
+    "store_location":0,
+    "product_id":0,
+    "unit_price":0,
+    "product_category":0,
+    "product_type":0,
+    "product_detail":0
+  },
+  "unit_price_min":0.8,
+  "unit_price_max":45.0,
+  "qty_min":1,
+  "qty_max":8,
+  "n_neg_or_zero_price":0,
+  "n_neg_or_zero_qty":0,
+  "n_rows_dropped_invalid":0,
+  "n_rows_clean":149116,
+  "date_min":"2023-01-01 07:06:11",
+  "date_max":"2023-06-30 20:57:19",
+  "stores":[
+    "Astoria",
+    "Hell's Kitchen",
+    "Lower Manhattan"
+  ],
+  "n_products":80,
+  "n_categories":9,
+  "n_product_types":29,
+  "total_revenue":698812.3300000001,
+  "total_units":214470,
+  "n_transactions":149116
+}

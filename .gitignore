@@ -1,0 +1,35 @@
+# ── 비밀 정보 ────────────────────────────────────────────────
+data/franchise/.apikey
+*.apikey
+.env
+*.key
+
+# ── 대용량 원본·파생 데이터 (스크립트로 재생성) ──────────────
+# 1부: Maven 원본 (README 의 curl 명령으로 내려받음)
+data/raw/
+# 1부: 정제 산출물 (01_preprocess.py 로 생성)
+data/processed/coffee_clean.csv
+data/processed/coffee_clean.parquet
+data/processed/store_day_panel.csv
+data/processed/store_week_panel.csv
+# 2부: 공정위 API 원본 (11_fetch_franchise_sales.py 로 재수집)
+data/franchise/franchise_all_raw.csv
+
+# 빅카인즈 수동 다운로드 원본 (개인 계정 export)
+data/franchise/bigkinds/*.xlsx
+data/franchise/bigkinds/*.xls
+data/franchise/bigkinds/*.csv
+
+# ── Python ──────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.ipynb_checkpoints/
+
+# ── OS / 에디터 ─────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
